@@ -1,0 +1,25 @@
+apiVersion: machinelearning.seldon.io/v1alpha2
+kind: SeldonDeployment
+metadata:
+  name: sklearn-care
+spec:
+  name: incompred
+  annotations:
+    sidecar.istio.io/inject: "false"
+  predictors:
+  - graph:
+      children: []
+      implementation: SKLEARN_SERVER
+      modelUri: gs://cshpe/models/sklearn/incomepred
+      name: classifier
+    name: default
+    replicas: 1
+    svcOrchSpec:
+      env:
+      - name: SELDON_LOG_LEVEL
+        value: DEBUG
+    componentSpecs:
+    - spec:
+        containers:
+        - image: seldonio/sklearnserver:1.5.0
+          name: classifier
